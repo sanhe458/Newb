@@ -1,0 +1,10 @@
+# IDE
+.trae/
+.claudecode/
+.idea/
+.vscode/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
