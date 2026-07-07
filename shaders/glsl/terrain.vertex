@@ -336,7 +336,6 @@ float camDist = length(wPos);
 		#ifdef SEASONS
 			amplitude *= 0.5;
 		#else
-			amplitude *= isTreeLeaves ? 1.0 : 1.0;
 			amplitude = isVines ? min(0.024,amplitude*fract(0.01+tiledCpos.y*0.5)) : amplitude;
 
 			// wave the bottom of plants in opposite direction to make it look fixed
@@ -352,26 +351,27 @@ float camDist = length(wPos);
 		//worldPos.y -= 1.0-sqrt(1.0-wave*wave);
 		// 藤蔓：根据顶点位置判断贴墙方向，垂直墙面的方向大幅减小摆动避免穿墙
 		if(isVines){
-			// 计算顶点离X/Z墙面的距离（0=中心，1=贴墙）
-			float xWall = abs(bPos.x - 0.5) * 2.0;
-			float zWall = abs(bPos.z - 0.5) * 2.0;
-			
-			// 贴墙的方向摆动幅度大幅减小，平行墙面的方向正常摆动
-			float xWave = wave * (1.0 - xWall * 0.9);
-			float zWave = wave * (1.0 - zWall * 0.9);
-			
+			// 藤蔓：判断贴墙方向，垂直墙面方向大幅抑制避免穿墙
+			// bPos.z≠0 表示北/南墙藤蔓（平行=X，垂直=Z）
+			// bPos.x≠0 表示东/西墙藤蔓（平行=Z，垂直=X）
+			bool onNorthSouthWall = bPos.z > 0.001;
+			float parallelWave = wave;
+			float perpWave = wave * 0.1;
+			float xWave = onNorthSouthWall ? parallelWave : perpWave;
+			float zWave = onNorthSouthWall ? perpWave : parallelWave;
+
 			worldPos.x -= xWave;
 			worldPos.z -= zWave;
 			worldPos.y += wave * 0.4;
 		} else if(isTreeLeaves) {
-			// 树叶：以方块底部中心为轴整体摆动
-			vec3 pivot = vec3(0.5, 0.0, 0.5);
-			vec3 rel = bPos - pivot;
-			float swayX = wave * rel.y;
-			float swayZ = wave * rel.y;
-			worldPos.x += swayX;
-			worldPos.z += swayZ;
-			worldPos.y -= abs(swayX) * 0.15 + abs(swayZ) * 0.15; // 轻微下垂弧线
+			// 树叶：整体摆动，X 与 Z 使用不同相位避免纯对角线
+			float waveZ = (1.0 + mix(
+				sin(t*wave_speed + phaseDiff + 1.57),
+				sin(t*wave_speed*1.5 + phaseDiff + 1.57),
+				rainFactor)) * amplitude;
+			worldPos.x -= wave;
+			worldPos.z -= waveZ;
+			worldPos.y -= wave*wave*0.5;
 		} else {
 			worldPos.xyz -= vec3(wave,wave*wave*0.5,wave);
 		}
