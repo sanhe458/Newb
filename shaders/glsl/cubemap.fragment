@@ -1,0 +1,17 @@
+// __multiversion__
+
+#if __VERSION__ >= 300
+	#define varying in
+	out vec4 FragColor;
+	#define gl_FragColor FragColor
+#endif
+
+#include "config_utilities/color.h"
+
+varying vec4 color;
+
+void main(){
+	// this cubemap is used to draw over region which skyplane doesn't occupy
+	highp vec3 col = colorCorrection(color.rgb);
+	gl_FragColor = vec4(col,clamp(color.a,0.0,1.0));
+}

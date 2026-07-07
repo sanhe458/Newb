@@ -1,0 +1,173 @@
+// __multiversion__
+
+#include "vertexVersionCentroid.h"
+#include "uniformWorldConstants.h"
+#include "uniformEntityConstants.h"
+#include "uniformPerFrameConstants.h"
+#include "uniformBannerConstants.h"
+#include "utilities/detectors.glsl"
+#include "config_utilities/sky.h"
+#include "config_utilities/global.h"
+
+#ifdef USE_SKINNING
+#include "uniformAnimationConstants.h"
+#endif
+
+attribute mediump vec4 POSITION;
+attribute vec2 TEXCOORD_0;
+attribute vec4 NORMAL;
+attribute vec4 COLOR;
+
+#if defined(USE_SKINNING)
+
+#ifdef MCPE_PLATFORM_NX
+	attribute uint BONEID_0;
+#else
+	attribute float BONEID_0;
+#endif
+
+#endif
+
+#if __VERSION__ >= 300
+	_centroid varying vec4 uv;
+#else
+	varying vec4 uv;
+#endif
+
+#ifdef ENABLE_FOG
+	varying vec4 mistColor;
+#endif
+
+#ifdef ENABLE_LIGHT
+	varying vec3 light;
+#endif
+
+#ifndef DISABLE_TINTING
+	varying vec4 color;
+#endif
+
+vec3 matmulxyz(mat4 w, vec4 p){
+	return vec3(
+		dot(vec4(w[0][0],w[1][0],w[2][0],w[3][0]),p),
+		dot(vec4(w[0][1],w[1][1],w[2][1],w[3][1]),p),
+		dot(vec4(w[0][2],w[1][2],w[2][2],w[3][2]),p)
+	);
+}
+
+vec3 lighting(){
+	float intensity;
+	vec3 light;
+
+	#ifdef FANCY
+
+	#ifdef USE_SKINNING
+		#if defined(LARGE_VERTEX_SHADER_UNIFORMS)
+			vec3 N = normalize(matmulxyz(BONES[int(BONEID_0)],NORMAL));
+		#else
+			vec3 N = normalize(matmulxyz(BONE,NORMAL));
+		#endif
+	#else
+		vec3 N = matmulxyz(WORLD,NORMAL);
+	#endif
+
+	//take care of double sided polygons on materials without culling
+	#ifdef FLIP_BACKFACES
+
+		#ifdef USE_SKINNING
+			#if defined(LARGE_VERTEX_SHADER_UNIFORMS)
+				vec3 viewDir = normalize(matmulxyz(BONES[int(BONEID_0)],POSITION));
+			#else
+				vec3 viewDir = normalize(matmulxyz(BONE,POSITION));
+			#endif
+		#else
+			vec3 viewDir = matmulxyz(WORLD,POSITION);
+		#endif
+
+		N *= -sign(dot(N,viewDir));
+
+	#endif	//FLIP_BACKFACES
+
+		N.y *= TILE_LIGHT_COLOR.w; //TILE_LIGHT_COLOR.w contains the direction of the light
+		N.xz *= N.xz;
+
+		intensity =  (0.5 + N.y*0.5)*(1.0-0.45) - N.x*0.1 + N.z*0.1 + 0.45;
+		intensity *= intensity;
+	#else
+		intensity = (0.7+abs(NORMAL.y)*0.3)*(0.9+abs(NORMAL.x)*0.1);
+	#endif
+
+	intensity *= TILE_LIGHT_COLOR.b*TILE_LIGHT_COLOR.b*sun_intensity*1.3;
+
+	float factor = TILE_LIGHT_COLOR.b-TILE_LIGHT_COLOR.r;
+	light = intensity*vec3(1.0-2.8*factor,1.0-2.7*factor,1.0);
+	light *= vec3(1.0) + FOG_COLOR.rgb*0.3;
+
+	return light;
+}
+
+void main(){
+#ifdef USE_SKINNING
+
+#if defined(LARGE_VERTEX_SHADER_UNIFORMS)
+	POS4 pos = WORLDVIEWPROJ * BONES[int(BONEID_0)] * POSITION;
+#else
+	POS4 pos = WORLDVIEWPROJ * BONE * POSITION;
+#endif
+#else
+	POS4 pos = WORLDVIEWPROJ * POSITION;
+#endif
+
+	gl_Position = pos;
+
+int frameIndex = int((COLOR.a*255.0) + 0.5);
+uv.xy = (TEXCOORD_0.xy * BANNER_UV_OFFSETS_AND_SCALES[frameIndex].zw) + BANNER_UV_OFFSETS_AND_SCALES[frameIndex].xy;
+uv.zw = (TEXCOORD_0.xy * BANNER_UV_OFFSETS_AND_SCALES[0].zw) + BANNER_UV_OFFSETS_AND_SCALES[0].xy;
+
+#ifndef DISABLE_TINTING
+	color = BANNER_COLORS[frameIndex];
+	color.a = float(frameIndex<=0);
+#endif
+
+#ifdef ENABLE_LIGHT
+	light.rgb = lighting();
+#endif
+
+#ifdef ENABLE_FOG
+	// detections
+	bool end = detectEnd();
+	bool nether = detectNether();
+	bool underWater = detectUnderwater();
+	float rainFactor = detectRain();
+
+	// horizon color
+	vec3 newFog = getHorizonCol(rainFactor);
+	newFog = getHorizonEdgeCol(newFog,rainFactor);
+	if(underWater){ newFog = getUnderwaterCol(); }
+
+	float len = pos.z/RENDER_DISTANCE;
+
+	mistColor = renderMist(newFog, len, TILE_LIGHT_COLOR.x, rainFactor, nether,underWater,end);
+	vec4 fogColor = renderFog(newFog, len , nether);
+
+	// nether,end,underwater tint
+	if(nether){
+		light.rgb *= TILE_LIGHT_COLOR.x*vec3(1.4,0.96,0.9);
+	}
+	if(end){
+		light.rgb *= vec3(2.1,1.5,2.3);
+		fogColor.rgb = vec3(0.16,0.06,0.2);
+	}
+	if(underWater){
+		#ifndef DISABLE_TINTING
+			light.rgb *= vec3(0.4,1.12,1.28);
+		#else
+			light.rgb *= vec3(0.5,1.4,1.6);
+		#endif
+	}
+
+	if(rainFactor > 0.0){ light.rgb *= 1.0-rainFactor*0.3; }
+
+	// mix fog with mist
+	mistColor = mix(mistColor,vec4(fogColor.rgb,1.0),fogColor.a);
+#endif //ENABLE_FOG
+}

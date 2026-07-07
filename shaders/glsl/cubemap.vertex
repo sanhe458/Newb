@@ -1,0 +1,38 @@
+// __multiversion__
+
+#if __VERSION__ >= 300
+	#define attribute in
+	#define varying out
+#endif
+
+#include "uniformWorldConstants.h"
+
+uniform vec4 FOG_COLOR;
+uniform vec2 FOG_CONTROL;
+uniform float RENDER_DISTANCE;
+
+#include "utilities/detectors.glsl"
+#include "config_utilities/sky.h"
+
+attribute POS4 POSITION;
+//attribute vec2 TEXCOORD_0;
+
+varying vec4 color;
+
+void main(){
+	vec4 newPos = POSITION;
+	newPos.y += 0.6*float(POSITION.y<0.5); // no need to render top half
+
+	// detections
+	bool underWater = detectUnderwater();
+	float rainFactor = detectRain();
+
+	// horizon color
+	color.rgb = getHorizonCol(rainFactor);
+	color.rgb = getHorizonEdgeCol(color.rgb,rainFactor);
+	if(underWater){ color.rgb = getUnderwaterCol(); }
+
+	color.a = (newPos.y-0.15)*10.0; // will be clamped in fragment shader
+
+	gl_Position = WORLDVIEWPROJ * newPos;
+}

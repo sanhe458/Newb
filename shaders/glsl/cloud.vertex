@@ -1,0 +1,60 @@
+// __multiversion__
+
+#include "vertexVersionSimple.h"
+
+#include "uniformWorldConstants.h"
+#include "uniformPerFrameConstants.h"
+#include "uniformShaderConstants.h"
+
+#include "utilities/noise.glsl"
+#include "utilities/detectors.glsl"
+#include "config_utilities/clouds.h"
+
+#include "config_utilities/global.h"
+
+uniform highp float TOTAL_REAL_WORLD_TIME;
+
+attribute mediump vec4 POSITION;
+
+varying vec4 color;
+
+void main(){
+	//// smooth clouds
+	POS4 worldPos = WORLD * POSITION;
+
+	vec4 newPos = POSITION;
+	newPos.y *= 0.1;
+	float len = length(worldPos.xz)*0.004;
+	newPos.y -= len*len*clamp(0.2*worldPos.y,-1.0,1.0); // curve the cloud plane
+
+	POS4 pos = WORLDVIEWPROJ * newPos;
+
+	highp float t = TOTAL_REAL_WORLD_TIME;
+	#ifdef TIME_FLIPPING
+		// remap 0-3600s to 0-1800-0s
+		t = 1800.0 - abs(t-1800.0);
+	#endif
+
+	float rain = detectRain();
+
+	color = vec4(CURRENT_COLOR.rgb,1.0);
+	color = renderClouds(color, worldPos.xz*cloud_size, t, rain);
+	color.rgb = mix(color.rgb,vec3(color.g*FOG_COLOR.g*3.5),rain*0.8);
+
+	// displace cloud vertex
+	pos.y += color.a*cloud_depth*(10.0-7.0*rain);
+
+	color.a *= cloud_alpha;
+
+	#ifdef AURORA
+		vec4 auroras = renderAurora(0.05*worldPos.xz,t,rain);
+		auroras *= max(1.0-(1.7*color.a),0.0);
+		auroras *= 1.0-min(4.5*max(FOG_COLOR.r,FOG_COLOR.b),1.0);
+		auroras.rgb *= AURORA;
+		color += auroras;
+	#endif
+
+	color.a *= clamp(2.0-2.0*length(worldPos.xyz)*0.002,0.0,1.0);
+
+	gl_Position = pos;
+}

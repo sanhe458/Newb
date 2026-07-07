@@ -1,0 +1,39 @@
+// __multiversion__
+
+#if __VERSION__ >= 300
+	#define varying in
+	out vec4 FragColor;
+	#define gl_FragColor FragColor
+#endif
+
+#include "config_utilities/color.h"
+
+varying vec3 zenith_color;
+varying vec3 horizon_color;
+varying vec3 horizon_edge_color;
+varying vec3 wPos;
+
+vec3 renderSky(vec3 reddishTint, vec3 horizonColor, vec3 zenithColor, float h){
+	h = 1.0-h*h;
+	float hsq = h*h;
+
+	// gradient 1  h^16
+	// gradient 2  h^8 mix h^2
+	float gradient1 = hsq*hsq*hsq*hsq;
+	float gradient2 = 0.6*gradient1 + 0.4*hsq;
+	gradient1 *= gradient1;
+
+	horizonColor = mix(horizonColor, reddishTint, gradient1);
+	return mix(zenithColor,horizonColor, gradient2 );
+}
+
+void main(){
+	//vec3 spherePos = normalize(wPos.xyz);
+	float sphereY = max(0.0,wPos.y/sqrt(dot(wPos.xyz,wPos.xyz)));
+
+	vec3 skyColor = renderSky(horizon_edge_color,horizon_color,zenith_color,sphereY);
+
+	skyColor = colorCorrection(skyColor);
+
+	gl_FragColor = vec4(skyColor,1.0);
+}
