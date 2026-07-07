@@ -87,7 +87,8 @@ vec3 lighting(vec4 position, vec4 normal){
 		intensity =  (0.5 + N.y*0.5)*(1.0-0.45) - N.x*0.1 + N.z*0.1 + 0.45;
 		intensity *= intensity;
 	#else
-		intensity = (0.7+abs(NORMAL.y)*0.3)*(0.9+abs(NORMAL.x)*0.1);
+		highp vec3 N = matmulxyz(WORLD,normal);
+		intensity = (0.7+abs(N.y)*0.3)*(0.9+abs(N.x)*0.1);
 	#endif
 
 	intensity *= TILE_LIGHT_COLOR.b*TILE_LIGHT_COLOR.b*sun_intensity*1.3;

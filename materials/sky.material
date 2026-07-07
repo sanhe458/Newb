@@ -11,7 +11,7 @@
 
 		"vertexShader" : "shaders/sun_moon.vertex",
 		"vrGeometryShader": "shaders/uv.geometry",
-		"fragmentShader" : "shaders/texture_ccolor.fragment",
+		"fragmentShader" : "shaders/texture_color.fragment",
     "vertexFields": [
       { "field": "Position" },
       { "field": "UV0" }

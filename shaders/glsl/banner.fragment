@@ -5,7 +5,7 @@
 #include "config_utilities/color.h"
 
 #if __VERSION__ >= 300
-	_centroid varying vec4 uv;
+	centroid in vec4 uv;
 #else
 	varying vec4 uv;
 #endif
