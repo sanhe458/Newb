@@ -67,7 +67,7 @@ const vec3 end_torch = vec3(1.0,0.52,0.18);
 
 // Toggle - Water wave
 // Value - Wave intensity of water surface
-#define WATER_WAVE 0.02
+#define WATER_WAVE 0.10
 
 // Toggle - Cloud reflection on water
 #define CLOUD_REFLECTION
@@ -76,15 +76,15 @@ const vec3 end_torch = vec3(1.0,0.52,0.18);
 //#define USE_ANGLE_BLEND_FADE
 
 // Value - Water transparency (0-1)
-#define water_transparency 0.55
+#define water_transparency 0.45
 
 // Value - Water noise bump height (0-0.2)
-#define water_bump 0.1
+#define water_bump 0.15
 
 // Color - Water color
-const vec3 sea_water_color = vec3(0.08, 0.55, 0.85);
-const vec3 fresh_water_color = vec3(0.05, 0.45, 0.5);
-const vec3 marshy_water_color = vec3(0.27,0.4,0.1);
+const vec3 sea_water_color = vec3(0.05, 0.65, 0.95);
+const vec3 fresh_water_color = vec3(0.12, 0.6, 0.75);
+const vec3 marshy_water_color = vec3(0.3, 0.45, 0.18);
 
 /*""""""""""""""""""""""""""""""""""""""*/
 

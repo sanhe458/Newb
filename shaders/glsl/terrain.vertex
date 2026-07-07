@@ -402,9 +402,10 @@ float camDist = length(wPos);
 
 #else
 	#if defined(MAYBE_WATER) && defined(WATER_WAVE)
-		if(isWater && camDist < 16.0){
-			worldPos.y += 0.002;
-			worldPos.xy += WATER_WAVE*vec2(1.0,min(15.0*fract(cPos.y),1.5))*sin( t*2.0 + dot(cPos,vec3(rd)));
+		if(isWater && camDist < 32.0){
+			worldPos.y += WATER_WAVE*0.3*sin(t*2.5 + dot(cPos.xz,vec2(rd)));
+			worldPos.x += WATER_WAVE*sin(t*2.0 + dot(cPos.yz,vec2(rd)));
+			worldPos.z += WATER_WAVE*sin(t*2.2 + dot(cPos.xy,vec2(rd)));
 		}
 	#endif
 #endif // ALPHA_TEST
