@@ -27,7 +27,7 @@ void main(){
 		vec4 diffuse = texture2D_AA(TEXTURE_0, uv );
 	#endif
 
-	float sphereY = pos.y/sqrt(dot(pos.xyz,pos.xyz));
+	float sphereY = pos.y/sqrt(max(dot(pos.xyz,pos.xyz), 1e-6));
 	float grad = 1.0-max(sphereY,0.0);
 	grad *= grad;
 

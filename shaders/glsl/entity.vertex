@@ -224,10 +224,10 @@ if(rainFactor>0.0 && pos.z<24.0){
 	highp vec3 wPos = matmulxyz(WORLD,entitySpacePosition);
 	highp vec3 dir = matmulxyz(WORLD,entitySpaceNormal);
 
-	float nrmY = dir.y/sqrt(dot(dir,dir));
+	float nrmY = dir.y/sqrt(max(dot(dir,dir), 1e-6));
 
 	if(nrmY>0.0){
-		float viewDirY = wPos.y/sqrt(dot(wPos,wPos));
+		float viewDirY = wPos.y/sqrt(max(dot(wPos,wPos), 1e-6));
 
 		float cosR = nrmY*(1.0-abs(viewDirY));
 

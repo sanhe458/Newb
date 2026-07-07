@@ -109,7 +109,8 @@ vec3 sunLightTint(vec3 night_color,vec3 morning_color,vec3 day_color,float dayFa
 
 
 // 1D sky with three color gradient
-// A copy of this is in sky.fragment, make changes there aswell
+// 此函数在 sky.fragment 中有一份本地副本（因 sky.h 整体 include 会引入依赖 FOG_COLOR
+// 的其他函数导致 fragment 编译错误）。修改任一版本时务必同步另一处。
 vec3 renderSky(vec3 reddishTint, vec3 horizonColor, vec3 zenithColor, float h){
 
 //h = h+0.04;

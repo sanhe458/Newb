@@ -352,9 +352,10 @@ float camDist = length(wPos);
 		// 藤蔓：根据顶点位置判断贴墙方向，垂直墙面的方向大幅减小摆动避免穿墙
 		if(isVines){
 			// 藤蔓：判断贴墙方向，垂直墙面方向大幅抑制避免穿墙
-			// bPos.z≠0 表示北/南墙藤蔓（平行=X，垂直=Z）
-			// bPos.x≠0 表示东/西墙藤蔓（平行=Z，垂直=X）
-			bool onNorthSouthWall = bPos.z > 0.001;
+			// bPos.z 接近 0 或 1 表示北/南墙藤蔓（平行=Z，垂直=X）
+			// 否则为东/西墙藤蔓（平行=X，垂直=Z）
+			// 南北墙藤蔓贴 Z 轴极值面（bPos.z 接近 0 或 1），东西墙藤蔓贴 X 轴极值面
+			bool onNorthSouthWall = abs(bPos.z - 0.5) > 0.4;
 			float parallelWave = wave;
 			float perpWave = wave * 0.1;
 			float xWave = onNorthSouthWall ? parallelWave : perpWave;
@@ -453,7 +454,7 @@ mistColor.rgb += torchColor*torch_intensity*lit.x*0.3;
 
 #if defined(FOG) || defined(BLEND)
 
-vec3 viewDir = -wPos/camDist;
+vec3 viewDir = -wPos/max(camDist, 1e-6);
 
 #ifdef MAYBE_WATER
 if(isWater){  
@@ -481,7 +482,7 @@ if(isWater){
 
 		// cloud reflection
 		#if defined(FANCY) && defined(CLOUD_REFLECTION)
-			vec2 parallax = viewDir.xz/viewDir.y;
+			vec2 parallax = viewDir.xz/(viewDir.y + 1e-4*sign(viewDir.y));
 			vec2 projectedPos = (0.7*wPos.xz*cloud_size) - parallax;
 
 			float fade = 0.1*length(projectedPos);
