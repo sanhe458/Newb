@@ -123,8 +123,8 @@ float calculateFresnel(float cosR, float r0){
 void main(){
 	// pos will be applied to gl_Position after wave code
 	#ifdef AS_ENTITY_RENDERER
+		POS4 worldPos = WORLD * POSITION;
 		POS4 pos = WORLDVIEWPROJ * POSITION;
-		POS4 worldPos = pos;
 	#else
 		POS4 worldPos;
 		worldPos.xyz = ((POSITION.xyz) * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz;
@@ -134,7 +134,7 @@ void main(){
 	vec3 wPos = worldPos.xyz;
 	vec3 cPos = POSITION.xyz;
 	vec3 bPos = fract(cPos);
-	vec3 tiledCpos = cPos*vec3(cPos.x<15.99,cPos.y<15.99,cPos.z<15.99);
+	vec3 tiledCpos = cPos*vec3(float(cPos.x<15.99),float(cPos.y<15.99),float(cPos.z<15.99));
 
 #ifndef BYPASS_PIXEL_SHADER
 

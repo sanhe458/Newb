@@ -4,9 +4,9 @@
 
 #if __VERSION__ >= 300
 	#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
-		_centroid in highp vec2 uv;
+		centroid in highp vec2 uv;
 	#else
-		_centroid in vec2 uv;
+		centroid in vec2 uv;
 	#endif
 #else
 	varying vec2 uv;
