@@ -1,8 +1,8 @@
 {
     "format_version": 2,
     "header": {
-        "description": "Newb Shader 增强版 - 优化色彩、天空、水效和树叶飘动\nv1.0.0",
-        "name": "Newb增强版",
+        "description": "Newb Shader 三河修改版 - 优化色彩、天空、水效和树叶飘动\nv1.0.0",
+        "name": "Newb Shader 三河修改版",
         "uuid": "6ae50d85-f81d-4f84-852b-c9daccf720e7",
         "version": [
             1,
@@ -11,13 +11,13 @@
         ],
         "min_engine_version": [
             1,
-            14,
-            10
+            16,
+            100
         ]
     },
     "modules": [
         {
-            "description": "Newb Shader 增强版 - 优化色彩、天空、水效和树叶飘动",
+            "description": "Newb Shader 三河修改版 - 优化色彩、天空、水效和树叶飘动",
             "type": "resources",
             "uuid": "1622cd98-dc49-4d9a-a9c6-8c250a6c8668",
             "version": [
@@ -29,7 +29,8 @@
     ],
     "metadata": {
         "authors": [
-            "devendrn"
+            "devendrn",
+            "三河"
         ],
         "license": "MIT License",
         "url": "https://mcpedl.com/newb-shader/"
