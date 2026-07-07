@@ -1,5 +1,3 @@
-/* water_surface_color is used to calculate water properties and to detect water:
-   (R-Tint,G-Lightness,B-Detection) */
 {
    "biomes" : {
       "bamboo_jungle" : {

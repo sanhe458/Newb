@@ -35,7 +35,7 @@ float detectRain(){
 	// clear FOG_CONTROL.x varies with RENDER_DISTANCE
 	// reverse plotted (low accuracy) as 0.5 + 1.09/(k-0.8) where k is renderdistance in chunks
 	// remaining values are equal to those specified in json file
-	vec2 start = vec2(0.5 + (1.09/((RENDER_DISTANCE*0.0625)-0.8)),0.99);
+	vec2 start = vec2(0.5 + (1.09/(sign((RENDER_DISTANCE*0.0625)-0.8)*max(abs((RENDER_DISTANCE*0.0625)-0.8), 1e-4))),0.99);
 	const vec2 end = vec2(0.2305,0.7005);
 
 	vec2 factor = clamp((start-FOG_CONTROL)/(start-end),vec2(0.0),vec2(1.0));
