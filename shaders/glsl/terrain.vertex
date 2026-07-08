@@ -365,14 +365,25 @@ float camDist = length(wPos);
 			worldPos.z -= zWave;
 			worldPos.y += wave * 0.4;
 		} else if(isTreeLeaves) {
-			// 树叶：整体摆动，X 与 Z 使用不同相位避免纯对角线
-			float waveZ = (1.0 + mix(
-				sin(t*wave_speed + phaseDiff + 1.57),
-				sin(t*wave_speed*1.5 + phaseDiff + 1.57),
-				rainFactor)) * amplitude;
-			worldPos.x -= wave;
+			// 树叶专用相位：仅依赖 XZ，不含 Y —— 修复纵向错位
+			// 小系数梯度让同一棵树（约 5~7 格宽）的叶块近似同步，
+			// 跨树才形成行波；随机项权重小，避免相邻叶块跳变。
+			float leafPhase = dot(cPos.xz, vec2(0.0942, 0.0785))
+			                + 0.4 * fastRand(floor(cPos.xz));
+
+			// 阵风包络：低频调制，让摆动有强弱呼吸感（替代匀速正弦）
+			float gust = 0.55 + 0.45 * sin(t * 0.6 + leafPhase * 0.25);
+			gust *= gust;                              // 锐化峰值
+			float leafAmp = amplitude * (0.5 + 0.5 * gust);
+
+			// 围绕静止位置双向摆动（去除原 1.0+ 常量偏移）
+			float waveX = sin(t * wave_speed        + leafPhase)        * leafAmp;
+			float waveZ = sin(t * wave_speed * 1.13 + leafPhase + 1.27) * leafAmp;
+
+			worldPos.x -= waveX;
 			worldPos.z -= waveZ;
-			worldPos.y -= wave*wave*0.5;
+			// Y 方向轻微上下浮动（双向、低幅），替代原仅向下的二次项
+			worldPos.y += sin(t * wave_speed * 0.83 + leafPhase + 0.6) * leafAmp * 0.12;
 		} else {
 			worldPos.xyz -= vec3(wave,wave*wave*0.5,wave);
 		}
