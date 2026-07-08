@@ -30,7 +30,7 @@
 
 1. 下载本仓库（`Code → Download ZIP`）或克隆：
    ```bash
-   git clone https://github.com/devendrn/newb-shader-mcbe.git
+   git clone https://github.com/sanhe458/Newb.git
    ```
 2. 将整个文件夹放入基岩版资源包目录：
    ```
