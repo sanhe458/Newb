@@ -389,9 +389,8 @@ float camDist = length(wPos);
 #else
 	#if defined(MAYBE_WATER) && defined(WATER_WAVE)
 		if(isWater && camDist < 32.0){
+			// 仅保留垂直方向波动，移除 X/Z 横向位移以避免水面与岸边产生缝隙
 			worldPos.y += WATER_WAVE*0.3*sin(t*2.5 + dot(cPos.xz,vec2(rd)));
-			worldPos.x += WATER_WAVE*sin(t*2.0 + dot(cPos.yz,vec2(rd)));
-			worldPos.z += WATER_WAVE*sin(t*2.2 + dot(cPos.xy,vec2(rd)));
 		}
 	#endif
 #endif // ALPHA_TEST
