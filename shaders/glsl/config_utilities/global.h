@@ -81,7 +81,7 @@ vec4 renderFog(vec3 fogColor, float len, bool nether){
 	}
 	else{ fog.rgb = fogColor; }
 
-	fog.a = clamp( (len -  FOG_CONTROL.x)/(FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+	fog.a = clamp( (len -  FOG_CONTROL.x)/max(FOG_CONTROL.y - FOG_CONTROL.x, 1e-4), 0.0, 1.0);
 
 	#if FOG_TYPE > 1
 		fog.a = (fog.a*fog.a)*(3.0-2.0*fog.a);

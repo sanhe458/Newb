@@ -290,6 +290,7 @@ float camDist = length(wPos);
 	#ifdef SEASONS
 		bool shouldWave = true;
 		bool isTreeLeaves = (tex0.a < 0.98 && tex0.a > 0.02) && (tex0.g > 0.1 || tex0.r > 0.1);
+		bool isVines = false; // SEASONS 模式不区分藤蔓方向，走默认摆动，避免下方 if(isVines) 引用未声明变量
 	#else
 
 	float tex0lum = tex0.r+tex0.g+tex0.b;
