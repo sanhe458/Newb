@@ -41,7 +41,8 @@
 // Code starts here - Users shouldn't mess down here
 // Clouds noise
 
-const vec2 cloud_size = vec2(0.7,1.0)/cloud_noise_size;
+// max 保护：用户若将 cloud_noise_size 配置为 0 会触发除零导致着色器编译失败
+const vec2 cloud_size = vec2(0.7,1.0)/max(cloud_noise_size, 1.0);
 
 const float start_rain = 1.0-rain_cloud_size;
 const float start_normal = 1.0-normal_cloud_size;

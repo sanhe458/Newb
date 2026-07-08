@@ -105,7 +105,8 @@ vec3 getRainSkyRefl(vec3 horizon, vec3 zenith, float h){
 // sunrise/sunset reflection
 vec3 getSunRefl(float viewDirX, float fog_brightness){
 	float sunRefl = clamp((abs(viewDirX)-0.9)/0.099,0.0,1.0);
-	float factor = FOG_COLOR.r/length(FOG_COLOR.rgb);
+	// 分母加 max 保护，避免 FOG_COLOR 为纯黑时（如传送加载瞬间）除零产生 NaN
+	float factor = FOG_COLOR.r/max(length(FOG_COLOR.rgb), 1e-6);
 	factor *= factor;
 	sunRefl *= sunRefl*sunRefl*factor*factor;
 	sunRefl *= sunRefl;

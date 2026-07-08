@@ -5,7 +5,8 @@
 bool detectEnd(){
 	// end is given a custom fog color in biomes_client.json to help in detection
 	// dark color (issue- rain transition when entering end)
-	return FOG_COLOR.r==FOG_COLOR.b && FOG_COLOR.r > 0.1  && FOG_COLOR.g < FOG_COLOR.r*0.4;
+	// 使用容差比较替代 ==，避免不同 GPU/驱动的浮点精度差异导致末地检测失效
+	return abs(FOG_COLOR.r-FOG_COLOR.b) < 0.001 && FOG_COLOR.r > 0.1  && FOG_COLOR.g < FOG_COLOR.r*0.4;
 }
 
 bool detectNether(){
@@ -35,7 +36,11 @@ float detectRain(){
 	// clear FOG_CONTROL.x varies with RENDER_DISTANCE
 	// reverse plotted (low accuracy) as 0.5 + 1.09/(k-0.8) where k is renderdistance in chunks
 	// remaining values are equal to those specified in json file
-	vec2 start = vec2(0.5 + (1.09/(sign((RENDER_DISTANCE*0.0625)-0.8)*max(abs((RENDER_DISTANCE*0.0625)-0.8), 1e-4))),0.99);
+	// 整个分母用 max 保护：当 RENDER_DISTANCE*0.0625==0.8 时 sign() 返回 0，
+	// 原表达式会得到 0 导致 1.09/0 产生 Inf/NaN，破坏雨水检测
+	float renderK = RENDER_DISTANCE*0.0625;
+	float denom = max(sign(renderK-0.8)*abs(renderK-0.8), 1e-4);
+	vec2 start = vec2(0.5 + (1.09/denom),0.99);
 	const vec2 end = vec2(0.2305,0.7005);
 
 	vec2 factor = clamp((start-FOG_CONTROL)/(start-end),vec2(0.0),vec2(1.0));

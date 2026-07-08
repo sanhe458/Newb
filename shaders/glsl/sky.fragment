@@ -6,29 +6,17 @@
 	#define gl_FragColor FragColor
 #endif
 
+// sky.h 中的函数引用 FOG_COLOR；在此声明 uniform 以便直接 include sky.h，
+// 不再维护 renderSky 的本地副本（原副本与 sky.h 不同步会造成天空渲染不一致）。
+uniform vec4 FOG_COLOR;
+
 #include "config_utilities/color.h"
+#include "config_utilities/sky.h"
 
 varying vec3 zenith_color;
 varying vec3 horizon_color;
 varying vec3 horizon_edge_color;
 varying vec3 wPos;
-
-// 注意：此函数与 config_utilities/sky.h 中的 renderSky 是同一实现的副本。
-// sky.h 整体 include 会引入依赖 FOG_COLOR 的其他函数导致编译错误，
-// 故此处保留本地副本。修改任一版本时务必同步另一处。
-vec3 renderSky(vec3 reddishTint, vec3 horizonColor, vec3 zenithColor, float h){
-	h = 1.0-h*h;
-	float hsq = h*h;
-
-	// gradient 1  h^16
-	// gradient 2  h^8 mix h^2
-	float gradient1 = hsq*hsq*hsq*hsq;
-	float gradient2 = 0.6*gradient1 + 0.4*hsq;
-	gradient1 *= gradient1;
-
-	horizonColor = mix(horizonColor, reddishTint, gradient1);
-	return mix(zenithColor,horizonColor, gradient2 );
-}
 
 void main(){
 	//vec3 spherePos = normalize(wPos.xyz);
