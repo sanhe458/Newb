@@ -289,18 +289,16 @@ float camDist = length(wPos);
 
 	#ifdef SEASONS
 		bool shouldWave = true;
-		bool isTreeLeaves = (tex0.a < 0.98 && tex0.a > 0.02) && (tex0.g > 0.1 || tex0.r > 0.1);
-		bool isVines = false; // SEASONS 模式不区分藤蔓方向，走默认摆动，避免下方 if(isVines) 引用未声明变量
 	#else
 
 	float tex0lum = tex0.r+tex0.g+tex0.b;
 
 	bool isTop = texPosY<0.5;
-	bool isTreeLeaves = (tex0.a < 0.98 && tex0.a > 0.02) && (tex0.g > 0.1 || tex0.r > 0.1);
+	bool isTreeLeaves = (COLOR.a==0.0 || tex0.a>0.99) && max(COLOR.g,COLOR.r)>0.37 && bPos.x+bPos.y+bPos.z<0.01;
 	bool isPlants = (COLOR.r/COLOR.g<1.9);
 	bool isVines = (bPos.y + bPos.x*bPos.z)<0.00005 && is(bPosC.x+bPosC.y,0.94921,0.94922);
 	bool isFarmPlant = (bPos.y==0.9375) && (bPosC.x==0.25 ||  bPosC.y==0.25); 
-	bool shouldWave = isTreeLeaves || isPlants || isVines || (isFarmPlant && isTop && !underWater);
+	bool shouldWave = ((isTreeLeaves || isPlants || isVines) && isColored) || (isFarmPlant && isTop && !underWater);
 	bool isGrassTop = (tex0.a<0.01 && tex0lum>2.99 && bPos.y==0.0);
 
 	// darken plants bottom - better to not move it elsewhere
@@ -330,7 +328,7 @@ float camDist = length(wPos);
 	#endif
 	#endif
 
-	if(shouldWave && camDist<64.0){
+	if(shouldWave && camDist<20.0){
 		// values must be a multiple of pi/4
 		float phaseDiff = dot(cPos,vec3(0.7854)) + fastRand(tiledCpos.xz + tiledCpos.y);
 		float amplitude = PLANTS_WAVE*windStrength;
@@ -338,6 +336,7 @@ float camDist = length(wPos);
 		#ifdef SEASONS
 			amplitude *= 0.5;
 		#else
+			amplitude *= isTreeLeaves ? 0.5 : 1.0;
 			amplitude = isVines ? min(0.024,amplitude*fract(0.01+tiledCpos.y*0.5)) : amplitude;
 
 			// wave the bottom of plants in opposite direction to make it look fixed
@@ -351,45 +350,8 @@ float camDist = length(wPos);
 		wave *= amplitude;
 
 		//worldPos.y -= 1.0-sqrt(1.0-wave*wave);
-		// 藤蔓：根据顶点位置判断贴墙方向，垂直墙面的方向大幅减小摆动避免穿墙
-		if(isVines){
-			// 藤蔓：判断贴墙方向，垂直墙面方向大幅抑制避免穿墙
-			// bPos.z 接近 0 或 1 表示北/南墙藤蔓（平行=Z，垂直=X）
-			// 否则为东/西墙藤蔓（平行=X，垂直=Z）
-			// 南北墙藤蔓贴 Z 轴极值面（bPos.z 接近 0 或 1），东西墙藤蔓贴 X 轴极值面
-			bool onNorthSouthWall = abs(bPos.z - 0.5) > 0.4;
-			float parallelWave = wave;
-			float perpWave = wave * 0.1;
-			float xWave = onNorthSouthWall ? parallelWave : perpWave;
-			float zWave = onNorthSouthWall ? perpWave : parallelWave;
-
-			worldPos.x -= xWave;
-			worldPos.z -= zWave;
-			worldPos.y += wave * 0.4;
-		} else if(isTreeLeaves) {
-			// 树叶专用相位：仅依赖 XZ，不含 Y —— 修复纵向错位
-			// 小系数梯度让同一棵树（约 5~7 格宽）的叶块近似同步，
-			// 跨树才形成行波；随机项权重小，避免相邻叶块跳变。
-			float leafPhase = dot(cPos.xz, vec2(0.0942, 0.0785))
-			                + 0.4 * fastRand(floor(cPos.xz));
-
-			// 阵风包络：低频调制，让摆动有强弱呼吸感（替代匀速正弦）
-			float gust = 0.55 + 0.45 * sin(t * 0.6 + leafPhase * 0.25);
-			gust *= gust;                              // 锐化峰值
-			float leafAmp = amplitude * (0.5 + 0.5 * gust);
-
-			// 围绕静止位置双向摆动（去除原 1.0+ 常量偏移）
-			float waveX = sin(t * wave_speed        + leafPhase)        * leafAmp;
-			float waveZ = sin(t * wave_speed * 1.13 + leafPhase + 1.27) * leafAmp;
-
-			worldPos.x -= waveX;
-			worldPos.z -= waveZ;
-			// Y 方向轻微上下浮动（双向、低幅），替代原仅向下的二次项
-			worldPos.y += sin(t * wave_speed * 0.83 + leafPhase + 0.6) * leafAmp * 0.12;
-		} else {
-			worldPos.xyz -= vec3(wave,wave*wave*0.5,wave);
-		}
-		}
+		worldPos.xyz -= vec3(wave,wave*wave*0.5,wave);
+	}
 #endif	//PLANTS_WAVE
 
 	#ifdef LANTERN_WAVE
