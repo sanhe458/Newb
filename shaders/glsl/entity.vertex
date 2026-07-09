@@ -192,9 +192,6 @@ float camDist = pos.z/RENDER_DISTANCE;
 mistColor = renderMist(newFog, camDist, TILE_LIGHT_COLOR.x, rainFactor, nether,underWater,end);
 vec4 fogColor = renderFog(newFog, camDist, nether);
 
-// mix fog with mist
-mistColor = mix(mistColor,vec4(fogColor.rgb,1.0),fogColor.a);
-
 // lighting
 light = lighting(entitySpacePosition, entitySpaceNormal);
 
@@ -217,6 +214,9 @@ if(underWater){
 	light += (vec3(1.0)+1.5*underwaterBaseCol)*caustic;
 }
 #endif
+
+// mix fog with mist (after nether/end/underwater fogColor modifications)
+mistColor = mix(mistColor,vec4(fogColor.rgb,1.0),fogColor.a);
 
 // wet effect
 wetRefl.a = 0.0;

@@ -5,8 +5,6 @@
 #include "uniformWorldConstants.h"
 #include "uniformShaderConstants.h"
 
-#include "config_utilities/color.h"
-
 varying vec3 horizon_color;
 varying vec3 pos;
 
@@ -33,5 +31,5 @@ void main()
 
 	uv = 0.1*(UV_TRANSFORM * vec4(TEXCOORD_0, 0, 1)).xy;
 
-	horizon_color = colorCorrection(vec3(0.16,0.06,0.2));
+	horizon_color = vec3(0.16,0.06,0.2);
 }
