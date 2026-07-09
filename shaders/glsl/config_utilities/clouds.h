@@ -24,6 +24,12 @@
 // Value - Cloud transparency (0-1)
 #define cloud_alpha 0.92
 
+// Toggle - Double layer clouds (Harrington style)
+#define DOUBLE_LAYER_CLOUDS
+
+// Value - Cloud cell frequency scale (higher = denser/smaller cells; 1.0 = Newb default density)
+#define cloud_cell_scale 1.0
+
 /*""""""""""""""""""""""""""""""""""""""*/
 
 
@@ -47,40 +53,58 @@ const vec2 cloud_size = vec2(0.7,1.0)/max(cloud_noise_size, 1.0);
 const float start_rain = 1.0-rain_cloud_size;
 const float start_normal = 1.0-normal_cloud_size;
 
-// clamp rand for cloud noise
-highp float rand01(highp vec2 seed,float start){
-	float result = rand(seed);
-	result = clamp((result-start)*3.4,0.0,1.0);
-	return result*result;
+// Harrington-style hash for cloud shapes (seed vec2(28.,48.))
+highp float cloudRand(highp vec2 n){
+	return fract(sin(dot(n, vec2(28.0,48.0))) * 43758.5453);
 }
 
-// 2D cloud noise - used by clouds
+// time-of-day factors for cloud coloring (ported from Harrington timeset)
+// returns vec3(fday, fsun, fnight); rain is passed in separately
+vec3 cloudTimeFactors(float rain){
+	float fday = clamp(FOG_COLOR.r+FOG_COLOR.g, 0.0, 1.0);
+	float fnight = 1.0-fday;
+	float fsun = pow(clamp(1.0-FOG_COLOR.b*1.2,0.0,1.0),0.5)*(1.0-fnight)*(1.0-rain);
+	return vec3(fday, fsun, fnight);
+}
+
+// 2D cloud noise - used by clouds and water reflection
+// Harrington cell-hash cloud shape, adapted to Newb cloud plane
 float cloudNoise2D(vec2 p, highp float t, float rain){
 
-	t *= cloud_speed;
+	// compensate Harrington's *35 base frequency so cell size ~ cloud_noise_size (world)
+	vec2 uv = p * cloud_cell_scale / 35.0;
+	float draw = 0.0;
+	float opacity = 1.0;
 
-	// start threshold - for bigger clouds during rain
-	float start = start_normal + (normal_cloud_size)*(0.1+0.1*sin(t + p.y*0.3));
-	start = mix(start,start_rain,rain);
+	// double layer (upper, sparser)
+	#ifdef DOUBLE_LAYER_CLOUDS
+		for(int i = 0; i < 8; i++){
+			uv /= 1.01;
+			float shape2 = step(0.83, cloudRand(floor(uv*50.0 - vec2(0.0, t*cloud_speed*0.02))));
+			draw = mix(draw, opacity-0.3, shape2);
+		}
+		float dshape2 = step(0.83, cloudRand(floor(uv*50.0 - vec2(0.0, t*cloud_speed*0.02))));
+		draw = mix(draw, (opacity-0.3)*0.85, dshape2);
+	#endif
 
-	p += vec2(t);
-	p.x += sin(p.y*0.4 + t);
+	// main layer (10 iterations scaling up for multi-scale detail)
+	vec2 uv2 = uv;
+	for(int i = 0; i < 10; i++){
+		uv2 *= 1.01;
+		float shape = cloudRand(floor(uv2*35.0 - vec2(0.0, t*cloud_speed*0.06)));
+		draw = mix(draw, opacity, mix(step(0.7,shape), step(0.35,shape), rain));
+	}
+	float dshape = cloudRand(floor(uv*35.0 - vec2(0.0, t*cloud_speed*0.06)));
+	draw = mix(draw, opacity*0.78, mix(step(0.7,dshape), step(0.35,dshape), rain));
 
-	vec2 p0 = floor(p);
-	vec2 u = p-p0;
-
-	u *= u*(3.0-2.0*u);
-	vec2 v = 1.0-u;
-
-	float c1 = rand01(p0,start);
-	float c2 = rand01(p0+vec2(1.0,0.0),start);
-	float c3 = rand01(p0+vec2(0.0,1.0),start);
-	float c4 = rand01(p0+vec2(1.0),start);
-
-	return v.y*(c1*v.x+c2*u.x) + u.y*(c3*v.x+c4*u.x);
+	// threshold using Newb's rain/normal cloud size (rain => more coverage)
+	float start = start_normal + (normal_cloud_size)*(0.1+0.1*sin(t*cloud_speed + p.y*0.3));
+	start = mix(start, start_rain, rain);
+	draw = clamp((draw-start)*3.4, 0.0, 1.0);
+	return draw*draw;
 }
 
-// simple cloud
+// simple cloud - Harrington shape + time-of-day coloring, adapted to Newb plane
 vec4 renderClouds(vec4 color, vec2 uv, highp float t, float rain){
 
 	float cloudAlpha = cloudNoise2D(uv,t,rain);
@@ -88,16 +112,24 @@ vec4 renderClouds(vec4 color, vec2 uv, highp float t, float rain){
 
 	cloudAlpha = max(cloudAlpha-cloudShadow,0.0);
 
-	// rainy clouds color
-	color.rgb = mix(color.rgb,vec3(0.7),rain*0.5);
+	// time-of-day factors (a=fsun, b=fnight, c=rain)
+	vec3 tf = cloudTimeFactors(rain);
+	float fsun = tf.y;
+	float fnight = tf.z;
+	float l_uv = clamp(length(uv*0.5),0.0,1.0);
 
-	// highlight at edge
-	color.rgb += vec3(0.6,0.6,1.0)*(0.2-cloudShadow);
+	// Harrington cloud color by time-of-day
+	vec4 cloudCol = mix(
+		mix(mix(vec4(1.0,1.1,1.1,0.85), vec4(0.53), rain),
+		    mix(mix(vec4(1.0,0.5,0.2,0.75), vec4(1.25,0.55,0.0,0.95)*1.23, l_uv), vec4(1.0), max(rain,fnight)),
+		    fsun),
+		mix(vec4(0.15,0.3,0.4,0.65), vec4(0.22), rain),
+		fnight);
 
-	// cloud shadow
+	// cloud shadow on underlying color
 	color.rgb *= (1.0-cloudShadow*3.0*cloud_shadow);
 
-	return vec4(color.rgb,cloudAlpha);
+	return vec4(mix(color.rgb, cloudCol.rgb, cloudAlpha), cloudAlpha);
 }
 
 // simple northern night sky effect

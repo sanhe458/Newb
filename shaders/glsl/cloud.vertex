@@ -39,7 +39,6 @@ void main(){
 
 	color = vec4(CURRENT_COLOR.rgb,1.0);
 	color = renderClouds(color, worldPos.xz*cloud_size, t, rain);
-	color.rgb = mix(color.rgb,vec3(color.g*FOG_COLOR.g*3.5),rain*0.8);
 
 	// displace cloud vertex
 	pos.y += color.a*cloud_depth*(10.0-7.0*rain);
