@@ -7,7 +7,7 @@
 #define rain_cloud_size 0.9
 
 // Value - Normal cloud size (0-1)
-#define normal_cloud_size 0.27
+#define normal_cloud_size 0.4
 
 // Value - Cloud map size (0-100)
 #define cloud_noise_size 36.0
@@ -19,10 +19,10 @@
 #define cloud_speed 0.04
 
 // Value - Cloud shadow intensity (0-1)
-#define cloud_shadow 0.54
+#define cloud_shadow 0.78
 
 // Value - Cloud transparency (0-1)
-#define cloud_alpha 0.8
+#define cloud_alpha 0.92
 
 /*""""""""""""""""""""""""""""""""""""""*/
 
@@ -32,7 +32,7 @@
 
 //️ Toggle - Enable aurora effect for night sky
 //️ Value - Aurora borealis brightness
-#define AURORA 1.0
+#define AURORA 0.0
 
 /*""""""""""""""""""""""""""""""""""""""*/
 

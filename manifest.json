@@ -1,8 +1,8 @@
 {
     "format_version": 2,
     "header": {
-        "description": "Newb Shader 三河修改版 - 优化色彩、天空、水效和树叶飘动\nv1.0.0",
-        "name": "Newb Shader 三河修改版",
+        "description": "Newb Shader 末日废土版 - 昏暗天空、灰暗雾气滤镜、废土色调\nv1.0.0",
+        "name": "Newb Shader 末日废土版",
         "uuid": "6ae50d85-f81d-4f84-852b-c9daccf720e7",
         "version": [
             1,
