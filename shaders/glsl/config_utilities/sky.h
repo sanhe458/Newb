@@ -4,22 +4,22 @@
 /* SKY */
 
 // color - Night sky color
-const vec3 nightSkyCol = vec3(0.01,0.06,0.1);
+const vec3 nightSkyCol = vec3(0.02,0.025,0.03);
 
 // color - Sky base color
-const vec3 skyBaseCol = vec3(0.1, 0.35, 0.95);
+const vec3 skyBaseCol = vec3(0.32, 0.33, 0.36);
 
 // value - Day sky clarity (0-1)
-const float daySkyClarity = 0.45;
+const float daySkyClarity = 0.2;
 
 // color - Sunrise base color
-const vec3 horizonBaseCol = vec3(1.0, 0.45, 0.25);
+const vec3 horizonBaseCol = vec3(0.55, 0.4, 0.3);
 
 // color - Sunrise edge color
-const vec3 horizonEdgeCol = vec3(1.0, 0.35, 0.15);
+const vec3 horizonEdgeCol = vec3(0.5, 0.35, 0.25);
 
 // color - Underwater fog color
-const vec3 underwaterBaseCol = vec3(0.0,0.6,1.0);
+const vec3 underwaterBaseCol = vec3(0.18,0.32,0.22);
 
 
 /*""""""""""""""""""""""""""""""""""""""*/
