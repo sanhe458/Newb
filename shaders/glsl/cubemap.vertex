@@ -21,7 +21,7 @@ varying vec4 color;
 
 void main(){
 	vec4 newPos = POSITION;
-	newPos.y += 0.6*float(POSITION.y<0.5); // no need to render top half
+	newPos.y += 0.6*float(POSITION.y<0.5); // shift bottom half up to avoid overlap with skyplane
 
 	// detections
 	bool underWater = detectUnderwater();

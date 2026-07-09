@@ -14,6 +14,7 @@
 
 #include "uniformShaderConstants.h"
 #include "util.h"
+#include "config_utilities/color.h"
 
 varying vec3 horizon_color;
 varying vec3 pos;
@@ -38,6 +39,8 @@ void main(){
 	// end void gradient
 	float glow = max((-sphereY-0.5)*2.0,0.0);
 	color += horizon_color*glow*glow*glow;
+
+	color = colorCorrection(color);
 
 	gl_FragColor = vec4(color,1.0);
 }

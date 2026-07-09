@@ -68,7 +68,7 @@
     "samplerStates": [
       {
         "samplerIndex": 0,
-        "textureFilter": "Point"
+        "textureFilter": "Bilinear"
       }
     ],
     "vertexFields": [
