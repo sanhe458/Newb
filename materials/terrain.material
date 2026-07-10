@@ -118,7 +118,6 @@
     "terrain_alpha:terrain_alpha_single_side": {
       "+states": [ "DisableCulling" ],
 
-      // z-fighting fix
       "depthBias": 0.0,
       "slopeScaledDepthBias": 0.1,
       "depthBiasOGL": 0.0,

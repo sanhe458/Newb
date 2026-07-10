@@ -456,7 +456,9 @@ if(isWater){
 
 		// cloud reflection
 		#if defined(FANCY) && defined(CLOUD_REFLECTION)
-			vec2 parallax = viewDir.xz/(viewDir.y + 1e-4*sign(viewDir.y));
+			// viewDir.y 为 0 时 sign(0)=0 仍会除零，用三元替换为小正值避免 NaN
+			float viewDirY = abs(viewDir.y) < 1e-4 ? 1e-4 : viewDir.y;
+			vec2 parallax = viewDir.xz/viewDirY;
 			vec2 projectedPos = (0.7*wPos.xz*cloud_size) - parallax;
 
 			float fade = 0.1*length(projectedPos);

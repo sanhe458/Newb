@@ -36,10 +36,11 @@ float detectRain(){
 	// clear FOG_CONTROL.x varies with RENDER_DISTANCE
 	// reverse plotted (low accuracy) as 0.5 + 1.09/(k-0.8) where k is renderdistance in chunks
 	// remaining values are equal to those specified in json file
-	// 整个分母用 max 保护：当 RENDER_DISTANCE*0.0625==0.8 时 sign() 返回 0，
-	// 原表达式会得到 0 导致 1.09/0 产生 Inf/NaN，破坏雨水检测
+	// 当 RENDER_DISTANCE*0.0625==0.8 时分母为 0，会导致 1.09/0 产生 Inf/NaN，
+	// 破坏雨水检测；此处仅在接近零时替换为小正值，保留负值行为
 	float renderK = RENDER_DISTANCE*0.0625;
-	float denom = max(sign(renderK-0.8)*abs(renderK-0.8), 1e-4);
+	float denom = renderK - 0.8;
+	denom = abs(denom) < 1e-4 ? 1e-4 : denom;
 	vec2 start = vec2(0.5 + (1.09/denom),0.99);
 	const vec2 end = vec2(0.2305,0.7005);
 
