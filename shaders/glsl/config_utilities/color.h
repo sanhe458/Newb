@@ -12,16 +12,16 @@
 #define TONEMAPPING_TYPE 4
 
 // Toggle + Value - Exposure
-#define EXPOSURE 0.82
+#define EXPOSURE 0.90
 
 // Value - Contrast
-#define CONTRAST 0.90
+#define CONTRAST 0.88
 
 // Toggle + Value - Saturation
-#define SATURATION 0.42
+#define SATURATION 0.70
 
 // Toggle + Color - Tinting
-#define TINT vec3(0.94,0.88,0.80)
+#define TINT vec3(0.96,0.93,0.89)
 
 
 /*""""""""""""""""""""""""""""""""""""""*/
