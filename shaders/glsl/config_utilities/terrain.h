@@ -22,9 +22,9 @@
 #define torch_intensity 1.0
 
 // Color - Top light color (Sunlight color)
-const vec3 morning_color = vec3(1.0, 0.5, 0.2);
-const vec3 noon_color = vec3(1.0, 0.82, 0.65);
-const vec3 night_color = vec3(0.5,0.64,1.0);
+const vec3 morning_color = vec3(0.68, 0.52, 0.38);
+const vec3 noon_color = vec3(0.82, 0.78, 0.70);
+const vec3 night_color = vec3(0.24, 0.27, 0.31);
 
 // Color - Torch light color
 const vec3 overworld_torch = vec3(1.0,0.52,0.18);
@@ -82,9 +82,9 @@ const vec3 end_torch = vec3(1.0,0.52,0.18);
 #define water_bump 0.15
 
 // Color - Water color
-const vec3 sea_water_color = vec3(0.05, 0.65, 0.95);
-const vec3 fresh_water_color = vec3(0.12, 0.6, 0.75);
-const vec3 marshy_water_color = vec3(0.3, 0.45, 0.18);
+const vec3 sea_water_color = vec3(0.22, 0.30, 0.26);
+const vec3 fresh_water_color = vec3(0.26, 0.34, 0.28);
+const vec3 marshy_water_color = vec3(0.28, 0.30, 0.20);
 
 /*""""""""""""""""""""""""""""""""""""""*/
 
@@ -103,7 +103,7 @@ const vec3 marshy_water_color = vec3(0.3, 0.45, 0.18);
 #define caustic_intensity 2.5
 
 // Color - Underwater lighting color
-const vec3 underwater_color = vec3(0.2,0.6,1.0);
+const vec3 underwater_color = vec3(0.18,0.28,0.26);
 
 /*""""""""""""""""""""""""""""""""""""""*/
 

@@ -1,11 +1,11 @@
 {
     "format_version": 2,
     "header": {
-        "description": "Newb Shader 三河修改版 - 优化色彩、天空、水效和树叶飘动\nv1.0.0",
-        "name": "Newb Shader 三河修改版",
-        "uuid": "6ae50d85-f81d-4f84-852b-c9daccf720e7",
+        "description": "Newb Shader 末日分支 - 废土昏暗天空、灰暗雾气滤镜、末日色调\nv2.0.0",
+        "name": "Newb Shader 末日分支",
+        "uuid": "7f3a2c1b-9e84-4d67-b521-8a3c4f9d6e02",
         "version": [
-            1,
+            2,
             0,
             0
         ],
@@ -17,11 +17,11 @@
     },
     "modules": [
         {
-            "description": "Newb Shader 三河修改版 - 优化色彩、天空、水效和树叶飘动",
+            "description": "Newb Shader 末日分支 - 废土昏暗天空、灰暗雾气滤镜、末日色调",
             "type": "resources",
-            "uuid": "1622cd98-dc49-4d9a-a9c6-8c250a6c8668",
+            "uuid": "4b8e1f7a-2c35-4a91-9d68-7e5f3a1b0c94",
             "version": [
-                1,
+                2,
                 0,
                 0
             ]
