@@ -39,7 +39,8 @@ void main(){
 
 	color = vec4(CURRENT_COLOR.rgb,1.0);
 	color = renderClouds(color, worldPos.xz*cloud_size, t, rain);
-	color.rgb = mix(color.rgb,vec3(color.g*FOG_COLOR.g*3.5),rain*0.8);
+	// apply rainy cloud color logic to all weather (clear + rain) for consistent doomsday look
+	color.rgb = mix(color.rgb,vec3(color.g*FOG_COLOR.g*3.5),0.8);
 
 	// wasteland cloud tint - color only, shape/size/speed/alpha unchanged
 	color.rgb *= cloud_tint;
