@@ -37,6 +37,15 @@
 /*""""""""""""""""""""""""""""""""""""""*/
 
 
+/*""""""""""""""""""""""""""""""""""""""*/
+/* CLOUD TINT */
+
+// Color - Wasteland cloud tint (only color, do not change shape/size/speed/alpha)
+const vec3 cloud_tint = vec3(0.72, 0.69, 0.63);
+
+/*""""""""""""""""""""""""""""""""""""""*/
+
+
 
 // Code starts here - Users shouldn't mess down here
 // Clouds noise

@@ -8,19 +8,19 @@
       "air": {
         "fog_start": 0.92,
         "fog_end": 1.0,
-        "fog_color": "#ABD2FF",
+        "fog_color": "#5C5650",
         "render_distance_type": "render"
       },
       "water": {
         "fog_start": 0,
         "fog_end": 60.0,
-        "fog_color": "#44AFF5",
+        "fog_color": "#3A4A40",
         "render_distance_type": "fixed"
       },
       "weather": {
         "fog_start": 0.23,
         "fog_end": 0.7,
-        "fog_color": "#666666",
+        "fog_color": "#47433D",
         "render_distance_type": "render"
       },
       "lava": {

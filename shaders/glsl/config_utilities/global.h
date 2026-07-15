@@ -14,7 +14,7 @@
 /* LIGHTING */
 
 // Value - Sunlight brightness
-#define sun_intensity 3.2
+#define sun_intensity 1.9
 
 /*""""""""""""""""""""""""""""""""""""""*/
 
@@ -29,7 +29,7 @@
 #define FOG_TYPE 2
 
 // Value - Density of mist
-#define mist_density 0.12
+#define mist_density 0.30
 
 /*""""""""""""""""""""""""""""""""""""""*/
 
