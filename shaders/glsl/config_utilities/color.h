@@ -21,7 +21,7 @@
 #define SATURATION 0.82
 
 // Toggle + Color - Tinting
-#define TINT vec3(0.97,0.95,0.92)
+#define TINT vec3(0.92,0.95,0.98)
 
 
 /*""""""""""""""""""""""""""""""""""""""*/

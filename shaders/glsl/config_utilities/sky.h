@@ -13,10 +13,10 @@ const vec3 skyBaseCol = vec3(0.16, 0.18, 0.21);
 const float daySkyClarity = 0.14;
 
 // color - Sunrise base color
-const vec3 horizonBaseCol = vec3(0.42, 0.34, 0.27);
+const vec3 horizonBaseCol = vec3(0.30, 0.33, 0.37);
 
 // color - Sunrise edge color
-const vec3 horizonEdgeCol = vec3(0.35, 0.29, 0.23);
+const vec3 horizonEdgeCol = vec3(0.25, 0.28, 0.32);
 
 // color - Underwater fog color
 const vec3 underwaterBaseCol = vec3(0.18,0.32,0.30);

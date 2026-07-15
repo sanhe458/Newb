@@ -41,7 +41,7 @@
 /* CLOUD TINT */
 
 // Color - Wasteland cloud tint (only color, do not change shape/size/speed/alpha)
-const vec3 cloud_tint = vec3(0.72, 0.69, 0.63);
+const vec3 cloud_tint = vec3(0.69, 0.72, 0.76);
 
 /*""""""""""""""""""""""""""""""""""""""*/
 
