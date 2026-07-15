@@ -40,8 +40,11 @@
 /*""""""""""""""""""""""""""""""""""""""*/
 /* CLOUD TINT */
 
-// Color - Wasteland cloud tint (only color, do not change shape/size/speed/alpha)
-const vec3 cloud_tint = vec3(0.72, 0.69, 0.63);
+// Color - Wasteland cloud tint for clear weather (lighter, keeps daytime clouds natural)
+const vec3 cloud_tint_clear = vec3(0.88, 0.86, 0.82);
+
+// Color - Wasteland cloud tint for rain (darker dusty brown, original doomsday look)
+const vec3 cloud_tint_rain = vec3(0.72, 0.69, 0.63);
 
 /*""""""""""""""""""""""""""""""""""""""*/
 
